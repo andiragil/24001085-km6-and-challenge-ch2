@@ -1,7 +1,7 @@
 function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 class Binar {
@@ -19,7 +19,7 @@ class Binar {
     })
   }
 
-  static async listCars(filterer) {
+  static async listCars(penumpang) {
     let cars;
     let cachedCarsString = localStorage.getItem("CARS");
 
@@ -36,8 +36,30 @@ class Binar {
       localStorage.setItem("CARS", JSON.stringify(cars));
     }
 
-    if (filterer instanceof Function) return cars.filter(filterer);
+    // if (filterer instanceof Function) cars = cars.filter(filterer);
+    if (penumpang > 0) {
+      cars = cars.filter((car) => car.capacity >= penumpang)
 
+    }
     return cars;
   }
+}
+
+async function filteredCars() {
+  let inputPassenger = document.getElementById("passenger").value;
+  let carContainerElement = document.getElementById("cars-container");
+  carContainerElement.innerHTML = "";
+  let filterCar = await Binar.listCars(inputPassenger);
+  console.log(filterCar)
+  if (filterCar.length < 1) {
+    carContainerElement.innerHTML = `<div class="alert alert-danger" role="alert">
+      Mobil tidak ditemukan
+    </div>`
+    return;
+  }
+  filterCar.forEach(car => {
+    let carObj = new Car(car);
+    carContainerElement.innerHTML += carObj.render()
+  });
+  return;
 }
